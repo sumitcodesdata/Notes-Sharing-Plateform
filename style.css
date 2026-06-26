@@ -1,0 +1,387 @@
+/* --- 1. Base Styles & Theme --- */
+:root {
+  --bg-color: #0b0f19;
+  --surface-color: #151c2c;
+  --primary-color: #7c3aed;
+  --text-main: #f3f4f6;
+  --text-muted: #9ca3af;
+  --border-color: #26354a;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  background-color: var(--bg-color);
+  background-image: linear-gradient(rgba(11, 15, 25, 0.85), rgba(11, 15, 25, 0.95)), url('image.png');
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed;
+  color: var(--text-main);
+  font-family: 'Inter', sans-serif;
+  line-height: 1.6;
+}
+
+/* --- 2. Navigation --- */
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.5rem 2rem;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.logo {
+  font-family: 'Outfit', sans-serif;
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: var(--text-main);
+}
+
+.nav-links a {
+  color: var(--text-muted);
+  text-decoration: none;
+  margin-right: 1.5rem;
+  font-size: 0.95rem;
+  font-weight: 500;
+}
+
+.nav-links a:hover {
+  color: var(--text-main);
+}
+
+.nav-buttons {
+  display: flex;
+  gap: 1rem;
+}
+
+/* --- 3. Buttons --- */
+.btn {
+  display: inline-block;
+  padding: 0.6rem 1.2rem;
+  border-radius: 6px;
+  font-weight: 500;
+  font-size: 0.9rem;
+  text-decoration: none;
+  cursor: pointer;
+  border: none;
+  text-align: center;
+  transition: background-color 0.2s;
+}
+
+.btn-primary {
+  background-color: var(--primary-color);
+  color: white;
+}
+
+.btn-primary:hover {
+  background-color: #6d28d9;
+}
+
+.btn-outline {
+  background-color: transparent;
+  border: 1px solid var(--border-color);
+  color: var(--text-main);
+}
+
+.btn-outline:hover {
+  background-color: var(--surface-color);
+}
+
+.btn-large {
+  padding: 0.8rem 1.8rem;
+  font-size: 1rem;
+}
+
+.btn-full {
+  width: 100%;
+}
+
+/* --- 4. Hero Section --- */
+.hero-section {
+  text-align: center;
+  padding: 5rem 2rem;
+}
+
+.hero-content {
+  max-width: 700px;
+  margin: 0 auto;
+}
+
+.hero-title {
+  font-family: 'Outfit', sans-serif;
+  font-size: 3rem;
+  font-weight: 800;
+  margin-bottom: 1rem;
+}
+
+.hero-subtitle {
+  font-size: 1.15rem;
+  color: var(--text-muted);
+  margin-bottom: 2rem;
+}
+
+.hero-cta {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+}
+
+/* --- 5. Features Grid --- */
+.features-section {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 2rem;
+  padding: 3rem 2rem;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.feature-card {
+  background-color: var(--surface-color);
+  border: 1px solid var(--border-color);
+  border-radius: 10px;
+  padding: 1.5rem;
+  transition: transform 0.2s;
+}
+
+.feature-card:hover {
+  transform: translateY(-4px);
+}
+
+.feature-card h3 {
+  margin-bottom: 0.75rem;
+}
+
+.feature-card p {
+  color: var(--text-muted);
+  font-size: 0.95rem;
+}
+
+/* --- 6. Explore Section --- */
+.explore-section {
+  padding: 5rem 2rem;
+  max-width: 1200px;
+  margin: 0 auto;
+  border-top: 1px solid var(--border-color);
+}
+
+.section-header {
+  text-align: center;
+  margin-bottom: 3rem;
+}
+
+.section-title {
+  font-family: 'Outfit', sans-serif;
+  font-size: 2.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.section-subtitle {
+  color: var(--text-muted);
+}
+
+/* --- 7. Notes Grid & Cards --- */
+.notes-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 2rem;
+}
+
+.note-card {
+  background-color: var(--surface-color);
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  transition: transform 0.2s;
+}
+
+.note-card:hover {
+  transform: translateY(-4px);
+}
+
+.card-tags {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 1rem;
+}
+
+.badge {
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 0.25rem 0.6rem;
+  border-radius: 4px;
+  background-color: rgba(124, 58, 237, 0.2);
+  color: #c084fc;
+}
+
+.university-tag {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+}
+
+.card-title {
+  font-size: 1.2rem;
+  margin-bottom: 0.75rem;
+}
+
+.card-description {
+  color: var(--text-muted);
+  font-size: 0.9rem;
+  margin-bottom: 1.25rem;
+}
+
+.card-author {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 1.25rem;
+  font-size: 0.85rem;
+  color: var(--text-muted);
+}
+
+.author-avatar {
+  width: 1.75rem;
+  height: 1.75rem;
+  border-radius: 50%;
+  background-color: var(--border-color);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  color: var(--text-main);
+}
+
+.card-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-top: 1px solid var(--border-color);
+  padding-top: 1rem;
+}
+
+.card-stats {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+}
+
+.card-pricing {
+  text-align: right;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+}
+
+.card-price {
+  font-weight: 800;
+  color: #10b981;
+  font-size: 1.2rem;
+}
+
+.card-price.free {
+  color: #06b6d4;
+}
+
+/* --- 8. Modals (CSS `:target` system) --- */
+.modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 2000;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: 1.5rem;
+}
+
+.modal:target {
+  display: flex;
+}
+
+.modal-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(7, 10, 18, 0.85);
+  backdrop-filter: blur(8px);
+}
+
+.modal-content {
+  position: relative;
+  background-color: var(--surface-color);
+  border: 1px solid var(--border-color);
+  border-radius: 16px;
+  width: 100%;
+  max-width: 500px;
+  overflow: hidden;
+  z-index: 2010;
+  display: flex;
+  flex-direction: column;
+}
+
+.close-btn {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  color: var(--text-muted);
+  font-size: 1.5rem;
+  text-decoration: none;
+  z-index: 2020;
+}
+
+.close-btn:hover {
+  color: var(--text-main);
+}
+
+/* --- 9. Modal Details & Forms --- */
+.modal-details {
+  padding: 2.5rem 2rem;
+  display: flex;
+  flex-direction: column;
+}
+
+.form-group {
+  margin-bottom: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.form-group label {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+}
+
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+
+#upload-form input,
+#upload-form select,
+#upload-form textarea {
+  width: 100%;
+  padding: 0.65rem 0.85rem;
+  background-color: var(--bg-color);
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  color: var(--text-main);
+  outline: none;
+}
+
+#upload-form input:focus,
+#upload-form select:focus,
+#upload-form textarea:focus {
+  border-color: var(--primary-color);
+}

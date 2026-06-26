@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>NotesShare - Share and Discover Academic Notes</title>
+
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@600;800&display=swap"
+    rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+  <!-- Navigation Bar -->
+  <header class="navbar">
+    <div class="logo">NotesShare</div>
+    <nav class="nav-links">
+      <a href="#explore">Explore Notes</a>
+      <a href="#upload-modal">Upload</a>
+      <a href="#about">About</a>
+    </nav>
+    <div class="nav-buttons">
+      <a href="#login-modal" class="btn btn-outline">Log In</a>
+      <a href="#signup-modal" class="btn btn-primary">Sign Up</a>
+    </div>
+  </header>
+
+  <!-- Hero Section -->
+  <main class="hero-section">
+    <div class="hero-content">
+      <h1 class="hero-title">Your Academic Journey, Shared.</h1>
+      <p class="hero-subtitle">
+        Find high-quality, course-specific study notes uploaded by top students.
+        Share your own and earn rewards.
+      </p>
+      <div class="hero-cta">
+        <a href="#explore" class="btn btn-primary btn-large">Browse Study Notes</a>
+        <a href="#upload-modal" class="btn btn-outline btn-large">Upload Your Notes</a>
+      </div>
+    </div>
+  </main>
+
+  <!-- Brief Features Section -->
+  <section class="features-section">
+    <div class="feature-card">
+      <h3>Academic-First Search</h3>
+      <p>Filter notes by your institution, subject, and course code to find exactly what you need.</p>
+    </div>
+    <div class="feature-card">
+      <h3>In-Browser Previews</h3>
+      <p>Preview document pages before downloading or purchasing premium materials.</p>
+    </div>
+    <div class="feature-card">
+      <h3>Creator Rewards</h3>
+      <p>Monetize your hard work. Keep 70% of every sale when students purchase your notes.</p>
+    </div>
+  </section>
+
+  <!-- Explore Notes Section -->
+  <section id="explore" class="explore-section">
+    <div class="section-header">
+      <h2 class="section-title">Explore Study Notes</h2>
+      <p class="section-subtitle">Search course materials from top Indian colleges and universities</p>
+    </div>
+
+    <!-- Notes Grid -->
+    <div id="notes-grid" class="notes-grid">
+
+      <!-- Note Card 1 -->
+      <div class="note-card">
+        <div>
+          <div class="card-tags">
+            <span class="badge">Computer Science</span>
+            <span class="university-tag">IIT Delhi</span>
+          </div>
+          <h3 class="card-title">Introduction to Algorithms (IIT Delhi COL106) - Lecture Notes</h3>
+          <p class="card-description">Highly comprehensive lecture notes covering asymptotic notations (Big-O, Omega,
+            Theta), divide-and-conquer, recurrence relations, and heaps.</p>
+          <div class="card-author">
+            <div class="author-avatar">A</div>
+            <span>Uploaded by Aarav Sharma</span>
+          </div>
+        </div>
+        <div class="card-footer">
+          <div class="card-stats">
+            <span class="card-rating">
+              ★★★★☆
+              <span style="color: var(--text-muted); font-size: 0.75rem;">(4.8)</span>
+            </span>
+            <span class="card-downloads">342 downloads</span>
+          </div>
+          <div class="card-pricing">
+            <span class="card-price">₹199.00</span>
+            <a class="btn btn-primary"
+              style="padding: 0.35rem 0.75rem; font-size: 0.8rem; margin-top: 0.5rem; display: inline-block;"
+              href="#purchase-success-modal">
+              Buy Now
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Note Card 2 -->
+      <div class="note-card">
+        <div>
+          <div class="card-tags">
+            <span class="badge">Computer Science</span>
+            <span class="university-tag">IIT Bombay</span>
+          </div>
+          <h3 class="card-title">Machine Learning Cheat Sheet & Core Math Summaries (IIT Bombay)</h3>
+          <p class="card-description">Ultimate cheat sheet summarizing Supervised Learning (Regression, SVMs, Decision
+            Trees) and Unsupervised Learning (K-Means, PCA).</p>
+          <div class="card-author">
+            <div class="author-avatar">A</div>
+            <span>Uploaded by Ananya Iyer</span>
+          </div>
+        </div>
+        <div class="card-footer">
+          <div class="card-stats">
+            <span class="card-rating">
+              ★★★★★
+              <span style="color: var(--text-muted); font-size: 0.75rem;">(4.9)</span>
+            </span>
+            <span class="card-downloads">1,205 downloads</span>
+          </div>
+          <div class="card-pricing">
+            <span class="card-price free">Free</span>
+            <a class="btn btn-primary"
+              style="padding: 0.35rem 0.75rem; font-size: 0.8rem; margin-top: 0.5rem; display: inline-block;"
+              href="#purchase-success-modal">
+              Download
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Note Card 3 -->
+      <div class="note-card">
+        <div>
+          <div class="card-tags">
+            <span class="badge">Mathematics</span>
+            <span class="university-tag">NIT Trichy</span>
+          </div>
+          <h3 class="card-title">Multivariable Calculus - Double Integrals & Stokes' Theorem</h3>
+          <p class="card-description">Step-by-step calculus notes covering double integrals in polar coordinates, vector
+            fields, and Green's/Stokes' Theorems.</p>
+          <div class="card-author">
+            <div class="author-avatar">D</div>
+            <span>Uploaded by Devansh Gupta</span>
+          </div>
+        </div>
+        <div class="card-footer">
+          <div class="card-stats">
+            <span class="card-rating">
+              ★★★★☆
+              <span style="color: var(--text-muted); font-size: 0.75rem;">(4.7)</span>
+            </span>
+            <span class="card-downloads">189 downloads</span>
+          </div>
+          <div class="card-pricing">
+            <span class="card-price">₹99.00</span>
+            <a class="btn btn-primary"
+              style="padding: 0.35rem 0.75rem; font-size: 0.8rem; margin-top: 0.5rem; display: inline-block;"
+              href="#purchase-success-modal">
+              Buy Now
+            </a>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- Upload Notes Modal -->
+  <div id="upload-modal" class="modal">
+    <a href="#" class="modal-overlay"></a>
+    <div class="modal-content" style="max-width: 600px;">
+      <a href="#" class="close-btn">&times;</a>
+      <div class="modal-details" style="padding: 2.5rem 2rem;">
+        <h3 style="font-family: 'Outfit', sans-serif; font-size: 1.75rem; font-weight: 800; margin-bottom: 1.5rem;">
+          Upload Your Notes</h3>
+        <form action="#" method="GET">
+          <div class="form-group">
+            <label for="upload-title">Document Title</label>
+            <input type="text" id="upload-title" required placeholder="e.g. Data Structures & Algorithms">
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label for="upload-university">College / University</label>
+              <input type="text" id="upload-university" required placeholder="e.g. IIT Delhi or NIT Trichy">
+            </div>
+            <div class="form-group">
+              <label for="upload-course">Course Code</label>
+              <input type="text" id="upload-course" required placeholder="e.g. COL106">
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label for="upload-category">Subject Category</label>
+              <select id="upload-category" required>
+                <option value="" disabled selected>Select category</option>
+                <option value="computer science">Computer Science</option>
+                <option value="mathematics">Mathematics</option>
+                <option value="physics">Physics</option>
+                <option value="business">Business</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="upload-price">Price (₹)</label>
+              <input type="number" id="upload-price" min="0" step="1" required placeholder="e.g. 0 for Free, or 199">
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="upload-description">Description</label>
+            <textarea id="upload-description" required rows="2"
+              placeholder="Briefly describe what these notes cover..."></textarea>
+          </div>
+          <button type="submit" class="btn btn-primary btn-large btn-full" style="margin-top: 1rem;">Publish
+            Note</button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Login Modal -->
+  <div id="login-modal" class="modal">
+    <a href="#" class="modal-overlay"></a>
+    <div class="modal-content" style="max-width: 400px;">
+      <a href="#" class="close-btn">&times;</a>
+      <div class="modal-details" style="padding: 2.5rem 2rem;">
+        <h3
+          style="font-family: 'Outfit', sans-serif; font-size: 1.5rem; font-weight: 800; margin-bottom: 1.5rem; text-align: center;">
+          Log In to NotesShare</h3>
+        <form action="#" method="GET">
+          <div class="form-group">
+            <label for="login-email">Email Address</label>
+            <input type="email" id="login-email" required placeholder="you@university.edu">
+          </div>
+          <div class="form-group">
+            <label for="login-password">Password</label>
+            <input type="password" id="login-password" required placeholder="••••••••">
+          </div>
+          <button type="submit" class="btn btn-primary btn-large btn-full" style="margin-top: 1rem;">Log In</button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Signup Modal -->
+  <div id="signup-modal" class="modal">
+    <a href="#" class="modal-overlay"></a>
+    <div class="modal-content" style="max-width: 450px;">
+      <a href="#" class="close-btn">&times;</a>
+      <div class="modal-details" style="padding: 2.5rem 2rem;">
+        <h3
+          style="font-family: 'Outfit', sans-serif; font-size: 1.5rem; font-weight: 800; margin-bottom: 1.5rem; text-align: center;">
+          Join NotesShare</h3>
+        <form action="#" method="GET">
+          <div class="form-group">
+            <label for="signup-name">Full Name</label>
+            <input type="text" id="signup-name" required placeholder="Arjun Kumar">
+          </div>
+          <div class="form-group">
+            <label for="signup-email">Email Address</label>
+            <input type="email" id="signup-email" required placeholder="you@university.edu">
+          </div>
+          <div class="form-group">
+            <label for="signup-password">Password</label>
+            <input type="password" id="signup-password" required placeholder="Choose a secure password">
+          </div>
+          <button type="submit" class="btn btn-primary btn-large btn-full" style="margin-top: 1rem;">Create
+            Account</button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+</body>
+
+</html>
