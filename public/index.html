@@ -1,0 +1,502 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>NotesShare - Share and Discover Academic Notes</title>
+
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@600;800&display=swap"
+    rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+  <!-- Ambient background glow elements -->
+  <div class="glow-orb glow-orb-1"></div>
+  <div class="glow-orb glow-orb-2"></div>
+  <div class="glow-orb glow-orb-3"></div>
+
+  <!-- Navigation Bar -->
+  <header class="navbar">
+    <div class="logo">NotesShare</div>
+    <nav class="nav-links">
+      <a href="#explore">Explore Notes</a>
+      <a href="#upload-modal">Upload</a>
+      <a href="#about">About</a>
+    </nav>
+    <div class="nav-buttons">
+      <!-- Anonymous User Actions -->
+      <div class="anon-only">
+        <a href="#login-modal" class="btn btn-outline">Log In</a>
+        <a href="#signup-modal" class="btn btn-primary">Sign Up</a>
+      </div>
+      
+      <!-- Authenticated User Actions -->
+      <div class="auth-only">
+        <a href="#profile-modal" class="btn btn-outline" style="padding: 0.45rem 1rem; font-size: 0.85rem;">Dashboard</a>
+        <div class="user-profile">
+          <div class="user-avatar" id="header-user-avatar">S</div>
+          <span class="user-name" id="header-user-name">Sumit Ransurma</span>
+          <button id="logout-btn" class="btn btn-outline" style="padding:0.3rem 0.6rem; font-size:0.8rem; margin-left:0.5rem;">Log Out</button>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Hero Section -->
+  <main class="hero-section">
+    <div class="hero-content">
+      <h1 class="hero-title">Your Academic Journey, Shared.</h1>
+      <p class="hero-subtitle">
+        Find high-quality, course-specific study notes uploaded by top students.
+        Share your own and earn rewards.
+      </p>
+      <div class="hero-cta">
+        <a href="#explore" class="btn btn-primary btn-large">Browse Study Notes</a>
+        <a href="#upload-modal" class="btn btn-outline btn-large">Upload Your Notes</a>
+      </div>
+    </div>
+  </main>
+
+  <!-- Brief Features Section -->
+  <section class="features-section">
+    <div class="feature-card">
+      <div class="feature-icon-container">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feature-icon"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+      </div>
+      <h3>Academic-First Search</h3>
+      <p>Filter notes by your institution and subject category to find exactly what you need.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon-container">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feature-icon"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+      </div>
+      <h3>In-Browser Previews</h3>
+      <p>Preview document pages before downloading or purchasing premium materials.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon-container">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feature-icon"><rect x="2" y="4" width="20" height="16" rx="2" ry="2"></rect><line x1="12" y1="18" x2="12" y2="18.01"></line><line x1="12" y1="14" x2="12" y2="14.01"></line><line x1="16" y1="18" x2="16" y2="18.01"></line><line x1="16" y1="14" x2="16" y2="14.01"></line><line x1="20" y1="10" x2="4" y2="10"></line></svg>
+      </div>
+      <h3>Creator Rewards</h3>
+      <p>Monetize your hard work. Keep 70% of every sale when students purchase your notes.</p>
+    </div>
+  </section>
+
+  <!-- About Section -->
+  <section id="about" class="about-section">
+    <div class="about-content">
+      <h2 class="section-title">About NotesShare</h2>
+      <p class="about-text">
+        NotesShare is a collaborative knowledge-exchange platform built for students and academic
+        professionals across India. We provide a centralised, quality-controlled repository where
+        you can upload, discover, preview, and monetise educational materials — lecture notes,
+        research summaries, and study guides.
+      </p>
+      <div class="about-stats">
+        <div class="about-stat">
+          <span class="about-stat-number">500+</span>
+          <span class="about-stat-label">Active Students</span>
+        </div>
+        <div class="about-stat">
+          <span class="about-stat-number">1,200+</span>
+          <span class="about-stat-label">Notes Shared</span>
+        </div>
+        <div class="about-stat">
+          <span class="about-stat-number">50+</span>
+          <span class="about-stat-label">Institutions</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Explore Notes Section -->
+  <section id="explore" class="explore-section">
+    <div class="section-header">
+      <h2 class="section-title">Explore Study Notes</h2>
+      <p class="section-subtitle">Search course materials from top Indian colleges and universities</p>
+    </div>
+
+    <!-- Search & Filter Panel -->
+    <div class="filter-panel">
+      <div class="search-wrapper">
+        <input type="text" id="search-input" class="search-input"
+          placeholder="Search by title, description, or university...">
+      </div>
+      <div class="filter-controls">
+        <select id="category-filter" class="filter-select">
+          <option value="">All Categories</option>
+          <option value="computer science">Computer Science</option>
+          <option value="mathematics">Mathematics</option>
+          <option value="physics">Physics</option>
+          <option value="business">Business</option>
+        </select>
+        <select id="university-filter" class="filter-select">
+          <option value="">All Universities</option>
+          <option value="IIT Delhi">IIT Delhi</option>
+          <option value="IIT Bombay">IIT Bombay</option>
+          <option value="NIT Trichy">NIT Trichy</option>
+        </select>
+        <select id="price-filter" class="filter-select">
+          <option value="">All Prices</option>
+          <option value="free">Free</option>
+          <option value="paid">Paid</option>
+        </select>
+      </div>
+    </div>
+
+    <div id="notes-grid" class="notes-grid"></div>
+  </section>
+
+  <!-- Upload Notes Modal -->
+  <div id="upload-modal" class="modal">
+    <a href="#" class="modal-overlay"></a>
+    <div class="modal-content" style="max-width: 600px;">
+      <a href="#" class="close-btn">&times;</a>
+      <div class="modal-details" style="padding: 2.5rem 2rem;">
+        <h3 style="font-family: 'Outfit', sans-serif; font-size: 1.75rem; font-weight: 800; margin-bottom: 1.5rem;">
+          Upload Your Notes</h3>
+        <form id="upload-form">
+          <div class="form-group">
+            <label for="upload-title">Document Title</label>
+            <input type="text" id="upload-title" required placeholder="e.g. Data Structures & Algorithms">
+          </div>
+          <div class="form-group">
+            <label for="upload-university">College / University</label>
+            <input type="text" id="upload-university" required placeholder="e.g. IIT Delhi or NIT Trichy">
+          </div>
+          <div class="form-group">
+            <label for="upload-category">Subject Category</label>
+            <select id="upload-category" required>
+              <option value="" disabled selected>Select category</option>
+              <option value="computer science">Computer Science</option>
+              <option value="mathematics">Mathematics</option>
+              <option value="physics">Physics</option>
+              <option value="business">Business</option>
+            </select>
+          </div>
+          <input type="hidden" id="upload-price" value="0">
+          <div class="form-group">
+            <label for="upload-tags">Tags (Comma-separated)</label>
+            <input type="text" id="upload-tags" placeholder="e.g. algorithms, dsa, lecture-notes, mathematics">
+          </div>
+          <div class="form-group">
+            <label for="upload-file">Upload PDF Document</label>
+            <input type="file" id="upload-file" accept=".pdf" required style="padding: 0.5rem 0.75rem;">
+          </div>
+          <div class="form-group">
+            <label for="upload-description">Description</label>
+            <textarea id="upload-description" required rows="2"
+              placeholder="Briefly describe what these notes cover..."></textarea>
+          </div>
+          <button type="submit" class="btn btn-primary btn-large btn-full" style="margin-top: 1rem;">Publish
+            Note</button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Login Modal -->
+  <div id="login-modal" class="modal">
+    <a href="#" class="modal-overlay"></a>
+    <div class="modal-content" style="max-width: 400px;">
+      <a href="#" class="close-btn">&times;</a>
+      <div class="modal-details" style="padding: 2.5rem 2rem;">
+        <h3
+          style="font-family: 'Outfit', sans-serif; font-size: 1.5rem; font-weight: 800; margin-bottom: 1.5rem; text-align: center;">
+          Log In to NotesShare</h3>
+        <form id="login-form">
+          <div class="form-group">
+            <label for="login-email">Email Address</label>
+            <input type="email" id="login-email" required placeholder="you@university.edu">
+          </div>
+          <div class="form-group">
+            <label for="login-password">Password</label>
+            <input type="password" id="login-password" required placeholder="••••••••">
+          </div>
+          <button type="submit" class="btn btn-primary btn-large btn-full" style="margin-top: 1rem;">Log In</button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Signup Modal -->
+  <div id="signup-modal" class="modal">
+    <a href="#" class="modal-overlay"></a>
+    <div class="modal-content" style="max-width: 450px;">
+      <a href="#" class="close-btn">&times;</a>
+      <div class="modal-details" style="padding: 2.5rem 2rem;">
+        <h3
+          style="font-family: 'Outfit', sans-serif; font-size: 1.5rem; font-weight: 800; margin-bottom: 1.5rem; text-align: center;">
+          Join NotesShare</h3>
+        <form id="signup-form">
+          <div class="form-group">
+            <label for="signup-name">Full Name</label>
+            <input type="text" id="signup-name" required placeholder="Sumit Ransurma">
+          </div>
+          <div class="form-group">
+            <label for="signup-email">Email Address</label>
+            <input type="email" id="signup-email" required placeholder="you@university.edu">
+          </div>
+          <div class="form-group">
+            <label for="signup-password">Password</label>
+            <input type="password" id="signup-password" required placeholder="Choose a secure password">
+          </div>
+          <button type="submit" class="btn btn-primary btn-large btn-full" style="margin-top: 1rem;">Create
+            Account</button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Purchase & Download Modal -->
+  <div id="purchase-success-modal" class="modal">
+    <a href="#" class="modal-overlay" id="purchase-overlay"></a>
+    <div class="modal-content" style="max-width: 500px;">
+      <a href="#" class="close-btn" id="purchase-close">&times;</a>
+      <div class="modal-details" style="padding: 2.5rem 2rem; text-align: center;">
+        <span id="modal-success-icon" style="font-size: 3.5rem; margin-bottom: 1rem; display: inline-block;">🎁</span>
+        <h3 id="purchase-modal-title"
+          style="font-family: 'Outfit', sans-serif; font-size: 1.75rem; font-weight: 800; margin-bottom: 0.5rem;">
+          Confirm Action
+        </h3>
+        <p id="purchase-modal-subtitle" style="color: var(--text-muted); font-size: 0.95rem; margin-bottom: 1.5rem;">
+          You are about to access this note document.
+        </p>
+
+        <div id="purchase-action-container">
+          <button id="confirm-transaction-btn" class="btn btn-primary btn-large btn-full">
+            Confirm & Proceed
+          </button>
+        </div>
+
+        <!-- Progress Fill -->
+        <div id="download-progress" class="download-progress-container" style="display: none;">
+          <div class="download-status-text">
+            <span id="progress-status">Downloading document...</span>
+            <span id="progress-percent">0%</span>
+          </div>
+          <div class="progress-bar-bg">
+            <div id="progress-bar-fill" class="progress-bar-fill"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- User Profile Modal (Dashboard, Bookmarks, and Settings) -->
+  <div id="profile-modal" class="modal">
+    <a href="#" class="modal-overlay"></a>
+    <div class="modal-content" style="max-width: 700px;">
+      <a href="#" class="close-btn">&times;</a>
+      <div class="modal-details" style="padding: 2rem 2.25rem;">
+        
+        <!-- Tab Headers -->
+        <div class="profile-tabs-header">
+          <button class="profile-tab-btn active" data-tab="tab-dashboard">
+            Dashboard
+          </button>
+          <button class="profile-tab-btn" data-tab="tab-saved">
+            Saved Notes 🔖
+          </button>
+          <button class="profile-tab-btn" data-tab="tab-settings">
+            Account Settings ⚙️
+          </button>
+        </div>
+        
+        <!-- Tab Content: Dashboard -->
+        <div id="tab-dashboard" class="profile-tab-content active-content">
+          <div class="dashboard-stats-row">
+            <div class="dashboard-stat-card">
+              <span class="stat-label">Total Note Downloads</span>
+              <span class="stat-value" id="dashboard-total-downloads" style="color: var(--info-color);">0</span>
+            </div>
+            <div class="dashboard-stat-card">
+              <span class="stat-label">Earnings (70% Split)</span>
+              <span class="stat-value" id="dashboard-total-earnings" style="color: var(--success-color);">₹0.00</span>
+            </div>
+          </div>
+          <h4 style="font-family: var(--font-display); font-size: 1.1rem; font-weight: 700; margin-bottom: 0.85rem;">Your Published Course Material</h4>
+          <div id="dashboard-notes-list" class="dashboard-list">
+            <!-- Populated dynamically by app.js -->
+          </div>
+        </div>
+        
+        <!-- Tab Content: Saved Notes (Bookmarks) -->
+        <div id="tab-saved" class="profile-tab-content" style="display: none;">
+          <h4 style="font-family: var(--font-display); font-size: 1.1rem; font-weight: 700; margin-bottom: 0.85rem;">Your Bookmarked Study Materials</h4>
+          <div id="saved-notes-list" class="dashboard-list">
+            <!-- Populated dynamically by app.js -->
+          </div>
+        </div>
+        
+        <!-- Tab Content: Account Settings -->
+        <div id="tab-settings" class="profile-tab-content" style="display: none;">
+          <form id="settings-form" style="display: flex; flex-direction: column; gap: 1.25rem;">
+            <div class="form-row">
+              <div class="form-group">
+                <label for="settings-name">Full Name</label>
+                <input type="text" id="settings-name" required value="Sumit Ransurma">
+              </div>
+              <div class="form-group">
+                <label for="settings-email">Email Address</label>
+                <input type="email" id="settings-email" required value="you@university.edu">
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label for="settings-password">New Password (optional)</label>
+                <input type="password" id="settings-password" placeholder="Enter new password">
+              </div>
+              <div class="form-group">
+                <label for="settings-confirm">Confirm Password</label>
+                <input type="password" id="settings-confirm" placeholder="Confirm new password">
+              </div>
+            </div>
+            <button type="submit" class="btn btn-primary" style="align-self: flex-start; padding: 0.6rem 1.5rem; font-size: 0.85rem;">
+              Save Settings
+            </button>
+          </form>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- View Note Details Modal (PDF Preview, Ratings, Comments, Save/Download actions) -->
+  <div id="view-note-modal" class="modal">
+    <a href="#" class="modal-overlay"></a>
+    <div class="modal-content" style="max-width: 800px;">
+      <a href="#" class="close-btn">&times;</a>
+      <div class="modal-details" style="padding: 2.25rem 2rem;">
+        
+        <!-- Note Metadata Header -->
+        <div style="margin-bottom: 1.25rem; border-bottom: 1px solid var(--border-color); padding-bottom: 1rem;">
+          <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 1rem; text-align: left;">
+            <div>
+              <div class="badge-group" id="view-note-badges" style="margin-bottom: 0.5rem;">
+                <!-- Category badge -->
+              </div>
+              <h3 id="view-note-title" style="font-family: var(--font-display); font-size: 1.45rem; font-weight: 800; line-height: 1.3; color: var(--text-main);">
+                Note Document Title
+              </h3>
+              <div style="font-size: 0.85rem; color: var(--text-muted); margin-top: 0.4rem;">
+                <span id="view-note-university">IIT Delhi</span> • Uploaded by <span id="view-note-author" style="color: var(--text-main); font-weight: 500;">Author</span>
+              </div>
+            </div>
+            
+            <!-- Dynamic Save/Bookmark toggle -->
+            <button id="view-note-save-btn" class="btn btn-outline" style="padding: 0.5rem 0.85rem; font-size: 0.8rem; display: flex; align-items: center; gap: 0.25rem; flex-shrink: 0;">
+              Save Note 🔖
+            </button>
+          </div>
+        </div>
+
+        <!-- Note Viewer Layout Grid (Preview + Comments Side-by-Side) -->
+        <div class="view-note-grid">
+          
+          <!-- Column 1: PDF Viewer Panel -->
+          <div>
+            <h4 style="font-family: var(--font-display); font-size: 1rem; font-weight: 700; margin-bottom: 0.65rem; text-align: left;">
+              Document Preview (PDF Page 1)
+            </h4>
+            
+            <!-- Document mock visual preview canvas -->
+            <div class="pdf-viewer-canvas">
+              <div class="pdf-page-visual">
+                <div class="pdf-watermark">NotesShare Preview</div>
+                <div class="pdf-academic-text">
+                  <h5 id="view-note-preview-header">COL106 Lecture Outline</h5>
+                  <p id="view-note-preview-paragraph">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident...</p>
+                </div>
+              </div>
+            </div>
+            
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 1rem;">
+              <span id="view-note-downloads-count" style="font-size: 0.85rem; color: var(--text-muted);">0 downloads</span>
+              <button id="view-note-download-btn" class="btn btn-primary" style="padding: 0.5rem 1.25rem; font-size: 0.85rem;">
+                Download Note Document
+              </button>
+            </div>
+          </div>
+          
+          <!-- Column 2: Ratings & Reviews -->
+          <div class="view-note-reviews-col">
+            <div>
+              <h4 style="font-family: var(--font-display); font-size: 1rem; font-weight: 700; margin-bottom: 0.5rem; text-align: left;">
+                Reviews & Ratings
+              </h4>
+              <div style="display: flex; align-items: center; gap: 0.5rem;">
+                <span id="view-note-stars" class="stars-gold">★★★★★</span>
+                <span id="view-note-rating-score" style="font-weight: 600; font-size: 0.9rem;">(5.0)</span>
+              </div>
+            </div>
+            
+            <!-- Reviews List -->
+            <div class="reviews-section-container">
+              <div id="view-note-comments-list" class="comments-list-box">
+                <!-- Dynamic comments list -->
+              </div>
+            </div>
+            
+            <!-- Write Review Form -->
+            <form id="review-form">
+              <div class="form-group">
+                <label for="review-rating" style="font-size: 0.8rem; font-weight: 600;">Give Rating</label>
+                <select id="review-rating" required style="padding: 0.4rem; font-size: 0.85rem;">
+                  <option value="5">★★★★★ (5 Stars)</option>
+                  <option value="4">★★★★☆ (4 Stars)</option>
+                  <option value="3">★★★☆☆ (3 Stars)</option>
+                  <option value="2">★★☆☆☆ (2 Stars)</option>
+                  <option value="1">★☆☆☆☆ (1 Star)</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label for="review-comment" style="font-size: 0.8rem; font-weight: 600;">Your Comment</label>
+                <textarea id="review-comment" required rows="2" placeholder="Write your review..." style="padding: 0.5rem; font-size: 0.85rem; font-family: var(--font-sans);"></textarea>
+              </div>
+              <button type="submit" class="btn btn-primary" style="padding: 0.45rem 1rem; font-size: 0.8rem; align-self: flex-start;">
+                Post Review
+              </button>
+            </form>
+          </div>
+
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer class="site-footer">
+    <div class="footer-content">
+      <div class="footer-brand">
+        <span class="logo">NotesShare</span>
+        <p>Your academic journey, shared.</p>
+      </div>
+      <div class="footer-links">
+        <a href="#explore">Explore Notes</a>
+        <a href="#upload-modal">Upload</a>
+        <a href="#about">About</a>
+      </div>
+      <div class="footer-copy">
+        <p>&copy; 2026 NotesShare. Built by Sumit Ransurma.</p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Toast Notification Container -->
+  <div id="toast-notification" class="toast">
+    <span id="toast-icon">✨</span>
+    <span id="toast-message">Notification message here</span>
+  </div>
+
+  <!-- Main JavaScript application logic -->
+  <script src="app.js"></script>
+
+</body>
+
+</html>
