@@ -24,13 +24,10 @@ async function seedDatabase() {
     // Seed Creator 1
     let creator = await User.findOne({ email: 'aarav@notesshare.com' });
     if (!creator) {
-      const salt = await bcrypt.genSalt(10);
-      const hashedPassword = await bcrypt.hash('password123', salt);
-
       creator = new User({
         name: 'Aarav Sharma',
         email: 'aarav@notesshare.com',
-        password: hashedPassword
+        password: 'password123'
       });
       await creator.save();
       console.log('Created default creator Aarav Sharma (aarav@notesshare.com)');
@@ -39,13 +36,10 @@ async function seedDatabase() {
     // Seed Creator 2
     let creator2 = await User.findOne({ email: 'ananya@notesshare.com' });
     if (!creator2) {
-      const salt = await bcrypt.genSalt(10);
-      const hashedPassword = await bcrypt.hash('password123', salt);
-
       creator2 = new User({
         name: 'Ananya Iyer',
         email: 'ananya@notesshare.com',
-        password: hashedPassword
+        password: 'password123'
       });
       await creator2.save();
       console.log('Created default creator Ananya Iyer (ananya@notesshare.com)');
@@ -54,13 +48,10 @@ async function seedDatabase() {
     // Seed Creator 3
     let creator3 = await User.findOne({ email: 'devansh@notesshare.com' });
     if (!creator3) {
-      const salt = await bcrypt.genSalt(10);
-      const hashedPassword = await bcrypt.hash('password123', salt);
-
       creator3 = new User({
         name: 'Devansh Gupta',
         email: 'devansh@notesshare.com',
-        password: hashedPassword
+        password: 'password123'
       });
       await creator3.save();
       console.log('Created default creator Devansh Gupta (devansh@notesshare.com)');
