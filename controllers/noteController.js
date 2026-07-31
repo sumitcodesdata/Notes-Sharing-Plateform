@@ -1,6 +1,8 @@
 const fs = require('fs');
 const Note = require('../models/Note');
 const User = require('../models/User');
+const cloudinary = require('../config/cloudinary');
+
 
 // @desc    Get all study notes with filtering
 // @route   GET /api/notes
@@ -88,6 +90,28 @@ exports.createNote = async (req, res, next) => {
       throw new Error('User not found');
     }
 
+    // Upload local file to Cloudinary
+    let cloudinaryUrl = '';
+    try {
+      const uploadResult = await cloudinary.uploader.upload(req.file.path, {
+        resource_type: 'auto',
+        folder: 'academic_notes'
+      });
+      cloudinaryUrl = uploadResult.secure_url;
+    } catch (uploadErr) {
+      // Clean up local temp file if Cloudinary upload fails
+      if (req.file.path && fs.existsSync(req.file.path)) {
+        fs.unlinkSync(req.file.path);
+      }
+      res.status(500);
+      throw new Error(`Failed to upload PDF to Cloudinary: ${uploadErr.message}`);
+    }
+
+    // Clean up local temp file after successful upload to Cloudinary
+    if (req.file.path && fs.existsSync(req.file.path)) {
+      fs.unlinkSync(req.file.path);
+    }
+
     const priceVal = parseFloat(price) || 0;
     const isFree = priceVal === 0;
     const tagsArray = tags ? tags.split(',').map(tag => tag.trim()).filter(Boolean) : [];
@@ -101,7 +125,7 @@ exports.createNote = async (req, res, next) => {
       authorName: user.name,
       price: priceVal,
       isFree,
-      filePath: req.file.path,
+      filePath: cloudinaryUrl,
       tags: tagsArray
     });
 
@@ -173,6 +197,13 @@ exports.downloadNote = async (req, res, next) => {
     if (!note) {
       res.status(404);
       throw new Error('Note document not found');
+    }
+
+    // Check if the file is stored on Cloudinary
+    if (note.filePath.startsWith('http://') || note.filePath.startsWith('https://')) {
+      note.downloads += 1;
+      await note.save();
+      return res.redirect(note.filePath);
     }
 
     if (!fs.existsSync(note.filePath)) {
