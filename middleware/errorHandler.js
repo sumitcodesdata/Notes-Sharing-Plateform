@@ -1,6 +1,11 @@
 const errorHandler = (err, req, res, next) => {
   console.error(err.stack || err.message);
 
+  // Mongoose / Mongo unique constraint (duplicate key error)
+  if (err.code === 11000) {
+    return res.status(400).json({ message: 'Email is already registered' });
+  }
+
   // Multer errors (e.g. invalid file, too large)
   if (err.name === 'MulterError') {
     return res.status(400).json({ message: `Upload error: ${err.message}` });

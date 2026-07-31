@@ -22,14 +22,15 @@ exports.signup = async (req, res, next) => {
       throw new Error('Please provide all required fields');
     }
 
-    let user = await User.findOne({ email });
+    const cleanEmail = email.toLowerCase().trim();
+    let user = await User.findOne({ email: cleanEmail });
     if (user) {
       res.status(400);
       throw new Error('User already exists with this email');
     }
 
     // Creating user triggers the Mongoose pre-save hook for password hashing
-    user = new User({ name, email, password });
+    user = new User({ name, email: cleanEmail, password });
     await user.save();
 
     const token = generateToken(user.id);

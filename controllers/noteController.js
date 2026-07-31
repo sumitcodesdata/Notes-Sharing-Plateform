@@ -90,25 +90,22 @@ exports.createNote = async (req, res, next) => {
       throw new Error('User not found');
     }
 
-    // Upload local file to Cloudinary
+    // Upload local file to Cloudinary with local fallback
     let cloudinaryUrl = '';
+    let uploadedToCloudinary = false;
     try {
       const uploadResult = await cloudinary.uploader.upload(req.file.path, {
         resource_type: 'auto',
         folder: 'academic_notes'
       });
       cloudinaryUrl = uploadResult.secure_url;
+      uploadedToCloudinary = true;
     } catch (uploadErr) {
-      // Clean up local temp file if Cloudinary upload fails
-      if (req.file.path && fs.existsSync(req.file.path)) {
-        fs.unlinkSync(req.file.path);
-      }
-      res.status(500);
-      throw new Error(`Failed to upload PDF to Cloudinary: ${uploadErr.message}`);
+      console.warn("Cloudinary upload failed, falling back to local storage:", uploadErr.message || uploadErr);
     }
 
-    // Clean up local temp file after successful upload to Cloudinary
-    if (req.file.path && fs.existsSync(req.file.path)) {
+    // Clean up local temp file only if successfully uploaded to Cloudinary
+    if (uploadedToCloudinary && req.file.path && fs.existsSync(req.file.path)) {
       fs.unlinkSync(req.file.path);
     }
 
@@ -125,7 +122,7 @@ exports.createNote = async (req, res, next) => {
       authorName: user.name,
       price: priceVal,
       isFree,
-      filePath: cloudinaryUrl,
+      filePath: uploadedToCloudinary ? cloudinaryUrl : req.file.path,
       tags: tagsArray
     });
 

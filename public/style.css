@@ -637,7 +637,7 @@ body {
   max-width: 500px;
   max-height: 90vh;
   overflow-y: auto;
-  overflow: hidden;
+  overflow-x: hidden;
   z-index: 2010;
   display: flex;
   flex-direction: column;
