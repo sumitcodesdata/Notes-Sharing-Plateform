@@ -3,10 +3,7 @@ const Note = require('../models/Note');
 const User = require('../models/User');
 const cloudinary = require('../config/cloudinary');
 
-
-// @desc    Get all study notes with filtering
-// @route   GET /api/notes
-// @access  Public
+// GET /api/notes - Get all notes with filtering
 exports.getNotes = async (req, res, next) => {
   const { search, category, university, price } = req.query;
 
@@ -44,9 +41,7 @@ exports.getNotes = async (req, res, next) => {
   }
 };
 
-// @desc    Get a single study note by ID
-// @route   GET /api/notes/:id
-// @access  Public
+// GET /api/notes/:id
 exports.getNoteById = async (req, res, next) => {
   try {
     const note = await Note.findById(req.params.id);
@@ -60,9 +55,7 @@ exports.getNoteById = async (req, res, next) => {
   }
 };
 
-// @desc    Upload a new study note (PDF)
-// @route   POST /api/notes
-// @access  Private
+// POST /api/notes - Upload a new note
 exports.createNote = async (req, res, next) => {
   const { title, university, category, price, description, tags } = req.body;
 
@@ -73,7 +66,6 @@ exports.createNote = async (req, res, next) => {
     }
 
     if (!title || !university || !category || !description) {
-      // Clean up uploaded file if validation fails
       if (req.file.path && fs.existsSync(req.file.path)) {
         fs.unlinkSync(req.file.path);
       }
@@ -90,7 +82,7 @@ exports.createNote = async (req, res, next) => {
       throw new Error('User not found');
     }
 
-    // Upload local file to Cloudinary with local fallback
+    // Upload to Cloudinary, fall back to local storage
     let cloudinaryUrl = '';
     let uploadedToCloudinary = false;
     try {
@@ -104,7 +96,7 @@ exports.createNote = async (req, res, next) => {
       console.warn("Cloudinary upload failed, falling back to local storage:", uploadErr.message || uploadErr);
     }
 
-    // Clean up local temp file only if successfully uploaded to Cloudinary
+
     if (uploadedToCloudinary && req.file.path && fs.existsSync(req.file.path)) {
       fs.unlinkSync(req.file.path);
     }
@@ -129,7 +121,6 @@ exports.createNote = async (req, res, next) => {
     await note.save();
     res.status(201).json(note);
   } catch (err) {
-    // Ensure uploaded file is deleted in case of DB or server errors
     if (req.file && req.file.path && fs.existsSync(req.file.path)) {
       fs.unlinkSync(req.file.path);
     }
@@ -137,9 +128,7 @@ exports.createNote = async (req, res, next) => {
   }
 };
 
-// @desc    Add review rating & comment to a study note
-// @route   POST /api/notes/:id/reviews
-// @access  Private
+// POST /api/notes/:id/reviews - Add or update user review
 exports.createNoteReview = async (req, res, next) => {
   const { rating, text } = req.body;
 
@@ -167,13 +156,23 @@ exports.createNoteReview = async (req, res, next) => {
       throw new Error('User not found');
     }
 
-    const newReview = {
-      authorName: user.name,
-      rating: ratingVal,
-      text
-    };
+    const existingReviewIndex = note.reviews.findIndex(rev => 
+      (rev.author && rev.author.toString() === req.user.id) || rev.authorName === user.name
+    );
 
-    note.reviews.unshift(newReview);
+    if (existingReviewIndex > -1) {
+      note.reviews[existingReviewIndex].rating = ratingVal;
+      note.reviews[existingReviewIndex].text = text;
+      note.reviews[existingReviewIndex].author = req.user.id;
+      note.reviews[existingReviewIndex].createdAt = Date.now();
+    } else {
+      note.reviews.unshift({
+        author: req.user.id,
+        authorName: user.name,
+        rating: ratingVal,
+        text
+      });
+    }
 
     const totalRating = note.reviews.reduce((sum, rev) => sum + rev.rating, 0);
     note.rating = totalRating / note.reviews.length;
@@ -185,9 +184,94 @@ exports.createNoteReview = async (req, res, next) => {
   }
 };
 
-// @desc    Download the physical note PDF file
-// @route   GET /api/notes/:id/download
-// @access  Public
+// PUT /api/notes/:id/reviews/:reviewId - Edit review
+exports.updateNoteReview = async (req, res, next) => {
+  const { rating, text } = req.body;
+
+  try {
+    if (!rating || !text) {
+      res.status(400);
+      throw new Error('Rating and review comment text are required');
+    }
+
+    const ratingVal = parseInt(rating);
+    if (ratingVal < 1 || ratingVal > 5) {
+      res.status(400);
+      throw new Error('Rating must be between 1 and 5 stars');
+    }
+
+    const note = await Note.findById(req.params.id);
+    if (!note) {
+      res.status(404);
+      throw new Error('Note document not found');
+    }
+
+    const review = note.reviews.id(req.params.reviewId);
+    if (!review) {
+      res.status(404);
+      throw new Error('Review not found');
+    }
+
+    const user = await User.findById(req.user.id);
+
+    if (review.author && review.author.toString() !== req.user.id && review.authorName !== (user ? user.name : '')) {
+      res.status(403);
+      throw new Error('Not authorized to edit this review');
+    }
+
+    review.rating = ratingVal;
+    review.text = text;
+    review.createdAt = Date.now();
+
+    const totalRating = note.reviews.reduce((sum, rev) => sum + rev.rating, 0);
+    note.rating = totalRating / note.reviews.length;
+
+    await note.save();
+    res.json(note);
+  } catch (err) {
+    next(err);
+  }
+};
+
+// DELETE /api/notes/:id/reviews/:reviewId - Delete review
+exports.deleteNoteReview = async (req, res, next) => {
+  try {
+    const note = await Note.findById(req.params.id);
+    if (!note) {
+      res.status(404);
+      throw new Error('Note document not found');
+    }
+
+    const review = note.reviews.id(req.params.reviewId);
+    if (!review) {
+      res.status(404);
+      throw new Error('Review not found');
+    }
+
+    const user = await User.findById(req.user.id);
+
+    if (review.author && review.author.toString() !== req.user.id && review.authorName !== (user ? user.name : '')) {
+      res.status(403);
+      throw new Error('Not authorized to delete this review');
+    }
+
+    note.reviews.pull(req.params.reviewId);
+
+    if (note.reviews.length > 0) {
+      const totalRating = note.reviews.reduce((sum, rev) => sum + rev.rating, 0);
+      note.rating = totalRating / note.reviews.length;
+    } else {
+      note.rating = 5.0;
+    }
+
+    await note.save();
+    res.json(note);
+  } catch (err) {
+    next(err);
+  }
+};
+
+// GET /api/notes/:id/download
 exports.downloadNote = async (req, res, next) => {
   try {
     const note = await Note.findById(req.params.id);
@@ -201,20 +285,18 @@ exports.downloadNote = async (req, res, next) => {
 
     const safeTitle = note.title.replace(/[^a-zA-Z0-9]/g, '_');
 
-    // Check if the file is stored on Cloudinary
+    // Handle Cloudinary files
     if (note.filePath.startsWith('http://') || note.filePath.startsWith('https://')) {
       if (note.filePath.includes('cloudinary.com')) {
         const match = note.filePath.match(/\/([a-z]+)\/upload\/(?:v\d+\/)?(.+)$/);
         if (match) {
-          const resourceType = match[1]; // 'image' or 'raw'
+          const resourceType = match[1];
           let publicId = match[2];
 
-          // Strip extension if present for image resource types
           if (resourceType === 'image') {
             publicId = publicId.replace(/\.[^/.]+$/, '');
           }
 
-          // Generate signed secure download URL to bypass restricted PDF delivery
           const downloadUrl = cloudinary.utils.download_zip_url({
             public_ids: [publicId],
             resource_type: resourceType,
@@ -238,9 +320,7 @@ exports.downloadNote = async (req, res, next) => {
   }
 };
 
-// @desc    Toggle bookmark status of a study note
-// @route   POST /api/notes/:id/bookmark
-// @access  Private
+// POST /api/notes/:id/bookmark - Toggle bookmark
 exports.toggleBookmark = async (req, res, next) => {
   try {
     const user = await User.findById(req.user.id);
@@ -272,9 +352,7 @@ exports.toggleBookmark = async (req, res, next) => {
   }
 };
 
-// @desc    Update study note details
-// @route   PUT /api/notes/:id
-// @access  Private
+// PUT /api/notes/:id - Update note
 exports.updateNote = async (req, res, next) => {
   const { title, university, category, price, description, tags } = req.body;
 
@@ -285,15 +363,13 @@ exports.updateNote = async (req, res, next) => {
       throw new Error('Note document not found');
     }
 
-    // Check ownership
+
     if (note.author.toString() !== req.user.id) {
       res.status(403);
       throw new Error('Not authorized to update this note');
     }
 
-    // If new file is uploaded
     if (req.file) {
-      // Upload new file to Cloudinary with local fallback
       let cloudinaryUrl = '';
       let uploadedToCloudinary = false;
       try {
@@ -307,14 +383,14 @@ exports.updateNote = async (req, res, next) => {
         console.warn("Cloudinary upload failed during update, falling back to local storage:", uploadErr.message || uploadErr);
       }
 
-      // Delete old local file if it exists and is local (not a remote URL)
+
       if (note.filePath && !note.filePath.startsWith('http://') && !note.filePath.startsWith('https://')) {
         if (fs.existsSync(note.filePath)) {
           fs.unlinkSync(note.filePath);
         }
       }
 
-      // Clean up local temp file only if successfully uploaded to Cloudinary
+
       if (uploadedToCloudinary && req.file.path && fs.existsSync(req.file.path)) {
         fs.unlinkSync(req.file.path);
       }
@@ -322,7 +398,7 @@ exports.updateNote = async (req, res, next) => {
       note.filePath = uploadedToCloudinary ? cloudinaryUrl : req.file.path;
     }
 
-    // Update fields
+
     if (title) note.title = title;
     if (university) note.university = university;
     if (category) note.category = category.toLowerCase();
@@ -346,9 +422,7 @@ exports.updateNote = async (req, res, next) => {
   }
 };
 
-// @desc    Delete a study note
-// @route   DELETE /api/notes/:id
-// @access  Private
+// DELETE /api/notes/:id
 exports.deleteNote = async (req, res, next) => {
   try {
     const note = await Note.findById(req.params.id);
@@ -357,20 +431,20 @@ exports.deleteNote = async (req, res, next) => {
       throw new Error('Note document not found');
     }
 
-    // Check ownership
+
     if (note.author.toString() !== req.user.id) {
       res.status(403);
       throw new Error('Not authorized to delete this note');
     }
 
-    // Delete local PDF file if it exists and is local
+
     if (note.filePath && !note.filePath.startsWith('http://') && !note.filePath.startsWith('https://')) {
       if (fs.existsSync(note.filePath)) {
         fs.unlinkSync(note.filePath);
       }
     }
 
-    // Delete note from database
+
     await Note.findByIdAndDelete(req.params.id);
 
     res.json({ message: 'Note deleted successfully' });

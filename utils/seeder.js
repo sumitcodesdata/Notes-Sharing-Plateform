@@ -8,7 +8,7 @@ const uploadsDir = path.join(__dirname, '../uploads');
 
 async function seedDatabase() {
   try {
-    // Create uploads folder if not exists
+
     if (!fs.existsSync(uploadsDir)) {
       fs.mkdirSync(uploadsDir, { recursive: true });
     }
@@ -21,7 +21,7 @@ async function seedDatabase() {
 
     console.log('Note collection is empty. Executing seed database logic...');
 
-    // Seed Creator 1
+
     let creator = await User.findOne({ email: 'aarav@notesshare.com' });
     if (!creator) {
       creator = new User({
@@ -33,7 +33,7 @@ async function seedDatabase() {
       console.log('Created default creator Aarav Sharma (aarav@notesshare.com)');
     }
 
-    // Seed Creator 2
+
     let creator2 = await User.findOne({ email: 'ananya@notesshare.com' });
     if (!creator2) {
       creator2 = new User({
@@ -45,7 +45,7 @@ async function seedDatabase() {
       console.log('Created default creator Ananya Iyer (ananya@notesshare.com)');
     }
 
-    // Seed Creator 3
+
     let creator3 = await User.findOne({ email: 'devansh@notesshare.com' });
     if (!creator3) {
       creator3 = new User({

@@ -1,9 +1,7 @@
 const User = require('../models/User');
 const Note = require('../models/Note');
 
-// @desc    Get dashboard metrics and uploaded notes for the user
-// @route   GET /api/users/dashboard
-// @access  Private
+// GET /api/users/dashboard
 exports.getUserDashboard = async (req, res, next) => {
   try {
     const notes = await Note.find({ author: req.user.id }).sort({ createdAt: -1 });
@@ -21,9 +19,7 @@ exports.getUserDashboard = async (req, res, next) => {
   }
 };
 
-// @desc    Get saved/bookmarked notes of the user
-// @route   GET /api/users/bookmarks
-// @access  Private
+// GET /api/users/bookmarks
 exports.getUserBookmarks = async (req, res, next) => {
   try {
     const user = await User.findById(req.user.id).populate('savedNotes');
@@ -37,9 +33,7 @@ exports.getUserBookmarks = async (req, res, next) => {
   }
 };
 
-// @desc    Update user profile details (name, email, password)
-// @route   PUT /api/users/profile
-// @access  Private
+// PUT /api/users/profile
 exports.updateUserProfile = async (req, res, next) => {
   const { name, email, password } = req.body;
   try {
@@ -63,7 +57,6 @@ exports.updateUserProfile = async (req, res, next) => {
     }
 
     if (password) {
-      // Direct assignment triggers mongoose pre-save hashing
       user.password = password;
     }
 

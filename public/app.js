@@ -1,12 +1,13 @@
 const API_URL = '/api';
 
-// state
+
 let notesData = [];
 let currentUser = null;
 let currentTransactionNote = null;
 let currentViewingNote = null;
+let editingReviewId = null;
 
-// elements
+
 const notesGrid = document.getElementById("notes-grid");
 const searchInput = document.getElementById("search-input");
 const categoryFilter = document.getElementById("category-filter");
@@ -18,7 +19,7 @@ const loginForm = document.getElementById("login-form");
 const signupForm = document.getElementById("signup-form");
 const toastEl = document.getElementById("toast-notification");
 
-// init
+
 document.addEventListener("DOMContentLoaded", async () => {
   await checkAuthSession();
   await fetchNotes();
@@ -37,7 +38,7 @@ function getHeaders(contentType = "application/json") {
   return headers;
 }
 
-// check session
+
 async function checkAuthSession() {
   const token = localStorage.getItem("token");
   if (!token) {
@@ -64,7 +65,7 @@ async function checkAuthSession() {
   }
 }
 
-// fetch notes from API
+
 async function fetchNotes() {
   const searchVal = searchInput.value;
   const categoryVal = categoryFilter.value;
@@ -91,7 +92,7 @@ async function fetchNotes() {
   }
 }
 
-// toast alert
+
 function showToast(message, type = "success") {
   const toastMsg = document.getElementById("toast-message");
   const toastIcon = document.getElementById("toast-icon");
@@ -104,7 +105,7 @@ function showToast(message, type = "success") {
   }, 3000);
 }
 
-// render note cards
+
 function renderNotes(notes) {
   notesGrid.innerHTML = "";
   
@@ -127,12 +128,11 @@ function renderNotes(notes) {
     const stars = "★".repeat(Math.round(note.rating)) + "☆".repeat(5 - Math.round(note.rating));
     const priceText = note.isFree ? "Free" : `₹${note.price}`;
     
-    // Choose avatar background using stable index of the database id
+    // Choose avatar gradient from note id
     const code = note._id.charCodeAt(note._id.length - 1) || index;
     const avatarBg = avatarGradients[code % avatarGradients.length];
     
     card.innerHTML = `
-      <!-- Clickable Card Body -->
       <div class="card-details-trigger" data-id="${note._id}" style="cursor: pointer;">
         <div class="card-tags">
           <div class="badge-group">
@@ -147,7 +147,7 @@ function renderNotes(notes) {
           <span>Uploaded by <strong style="color: var(--text-main); font-weight: 500;">${note.authorName}</strong></span>
         </div>
       </div>
-      <!-- Card Footer Actions -->
+
       <div class="card-footer">
         <div class="card-stats">
           <span class="stars-gold">${stars}</span>
@@ -380,6 +380,18 @@ function setupListeners() {
   });
 
   const reviewForm = document.getElementById("review-form");
+  const reviewSubmitBtn = document.getElementById("review-submit-btn");
+  const reviewCancelBtn = document.getElementById("review-cancel-btn");
+
+  if (reviewCancelBtn) {
+    reviewCancelBtn.addEventListener("click", () => {
+      editingReviewId = null;
+      reviewForm.reset();
+      if (reviewSubmitBtn) reviewSubmitBtn.textContent = "Post Review";
+      reviewCancelBtn.style.display = "none";
+    });
+  }
+
   reviewForm.addEventListener("submit", async (e) => {
     e.preventDefault();
     if (!currentViewingNote) return;
@@ -393,18 +405,28 @@ function setupListeners() {
     const commentText = document.getElementById("review-comment").value;
     
     try {
-      const res = await fetch(`${API_URL}/notes/${currentViewingNote._id}/reviews`, {
-        method: "POST",
+      const url = editingReviewId
+        ? `${API_URL}/notes/${currentViewingNote._id}/reviews/${editingReviewId}`
+        : `${API_URL}/notes/${currentViewingNote._id}/reviews`;
+      
+      const method = editingReviewId ? "PUT" : "POST";
+      const isEditing = Boolean(editingReviewId);
+
+      const res = await fetch(url, {
+        method: method,
         headers: getHeaders(),
         body: JSON.stringify({ rating: ratingVal, text: commentText })
       });
 
       if (res.ok) {
         const updatedNote = await res.json();
+        editingReviewId = null;
         reviewForm.reset();
+        if (reviewSubmitBtn) reviewSubmitBtn.textContent = "Post Review";
+        if (reviewCancelBtn) reviewCancelBtn.style.display = "none";
         await renderNoteDetails(updatedNote._id);
         await fetchNotes();
-        showToast("Review submitted successfully!");
+        showToast(isEditing ? "Review updated successfully!" : "Review submitted successfully!");
       } else {
         const data = await res.json();
         showToast(data.message || "Failed to submit review.", "error");
@@ -697,13 +719,71 @@ function renderCommentsList(note) {
     const starsStr = "★".repeat(review.rating) + "☆".repeat(5 - review.rating);
     const item = document.createElement("div");
     item.className = "comment-item";
-    item.innerHTML = `
-      <div class="comment-header">
-        <span class="comment-author">${review.authorName}</span>
-        <span class="stars-gold" style="font-size: 0.75rem;">${starsStr}</span>
+
+    const isAuthor = currentUser && (
+      (review.author && (review.author === currentUser._id || review.author === currentUser.id)) ||
+      review.authorName === currentUser.name
+    );
+
+    const actionButtons = isAuthor ? `
+      <div style="display: flex; gap: 0.35rem;">
+        <button class="btn btn-outline edit-review-btn" data-id="${review._id}" style="padding: 0.15rem 0.4rem; font-size: 0.7rem;">Edit ✏️</button>
+        <button class="btn btn-outline delete-review-btn" data-id="${review._id}" style="padding: 0.15rem 0.4rem; font-size: 0.7rem; color: var(--danger-color, #ef4444); border-color: rgba(239, 68, 68, 0.4);">Delete 🗑️</button>
       </div>
-      <div class="comment-text">${review.text}</div>
+    ` : '';
+
+    item.innerHTML = `
+      <div class="comment-header" style="display: flex; justify-content: space-between; align-items: center;">
+        <div>
+          <span class="comment-author">${review.authorName}</span>
+          <span class="stars-gold" style="font-size: 0.75rem; margin-left: 0.5rem;">${starsStr}</span>
+        </div>
+        ${actionButtons}
+      </div>
+      <div class="comment-text" style="margin-top: 0.25rem;">${review.text}</div>
     `;
+
+    if (isAuthor) {
+      const editBtn = item.querySelector(".edit-review-btn");
+      if (editBtn) {
+        editBtn.addEventListener("click", () => {
+          editingReviewId = review._id;
+          document.getElementById("review-rating").value = review.rating;
+          document.getElementById("review-comment").value = review.text;
+          const submitBtn = document.getElementById("review-submit-btn");
+          const cancelBtn = document.getElementById("review-cancel-btn");
+          if (submitBtn) submitBtn.textContent = "Update Review";
+          if (cancelBtn) cancelBtn.style.display = "inline-block";
+          document.getElementById("review-comment").focus();
+        });
+      }
+
+      const deleteBtn = item.querySelector(".delete-review-btn");
+      if (deleteBtn) {
+        deleteBtn.addEventListener("click", async () => {
+          if (!confirm("Are you sure you want to delete your review?")) return;
+          try {
+            const res = await fetch(`${API_URL}/notes/${note._id}/reviews/${review._id}`, {
+              method: "DELETE",
+              headers: getHeaders()
+            });
+
+            if (res.ok) {
+              const updatedNote = await res.json();
+              showToast("Review deleted.", "info");
+              await renderNoteDetails(updatedNote._id);
+              await fetchNotes();
+            } else {
+              const data = await res.json();
+              showToast(data.message || "Failed to delete review.", "error");
+            }
+          } catch (err) {
+            console.error(err);
+          }
+        });
+      }
+    }
+
     listEl.appendChild(item);
   });
 }
@@ -848,7 +928,7 @@ async function openEditModal(noteId) {
     document.getElementById("edit-tags").value = note.tags.join(', ');
     document.getElementById("edit-description").value = note.description;
     
-    // Reset file input
+
     document.getElementById("edit-file").value = "";
 
     window.location.hash = "#edit-modal";

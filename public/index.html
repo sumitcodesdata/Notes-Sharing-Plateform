@@ -521,9 +521,14 @@
                 <label for="review-comment" style="font-size: 0.8rem; font-weight: 600;">Your Comment</label>
                 <textarea id="review-comment" required rows="2" placeholder="Write your review..." style="padding: 0.5rem; font-size: 0.85rem; font-family: var(--font-sans);"></textarea>
               </div>
-              <button type="submit" class="btn btn-primary" style="padding: 0.45rem 1rem; font-size: 0.8rem; align-self: flex-start;">
-                Post Review
-              </button>
+              <div style="display: flex; gap: 0.5rem; align-items: center;">
+                <button type="submit" id="review-submit-btn" class="btn btn-primary" style="padding: 0.45rem 1rem; font-size: 0.8rem;">
+                  Post Review
+                </button>
+                <button type="button" id="review-cancel-btn" class="btn btn-outline" style="display: none; padding: 0.45rem 0.75rem; font-size: 0.8rem;">
+                  Cancel Edit
+                </button>
+              </div>
             </form>
           </div>
 

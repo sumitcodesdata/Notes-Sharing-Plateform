@@ -1,7 +1,7 @@
 const jwt = require('jsonwebtoken');
 const User = require('../models/User');
 
-// Helper to generate JWT Token
+// Generate JWT token
 const generateToken = (userId) => {
   const payload = { user: { id: userId } };
   return jwt.sign(
@@ -11,9 +11,7 @@ const generateToken = (userId) => {
   );
 };
 
-// @desc    Register a new user
-// @route   POST /api/auth/signup
-// @access  Public
+// POST /api/auth/signup
 exports.signup = async (req, res, next) => {
   const { name, email, password } = req.body;
   try {
@@ -29,7 +27,6 @@ exports.signup = async (req, res, next) => {
       throw new Error('User already exists with this email');
     }
 
-    // Creating user triggers the Mongoose pre-save hook for password hashing
     user = new User({ name, email: cleanEmail, password });
     await user.save();
 
@@ -44,9 +41,7 @@ exports.signup = async (req, res, next) => {
   }
 };
 
-// @desc    Authenticate user and get token
-// @route   POST /api/auth/login
-// @access  Public
+// POST /api/auth/login
 exports.login = async (req, res, next) => {
   const { email, password } = req.body;
   try {
@@ -78,9 +73,7 @@ exports.login = async (req, res, next) => {
   }
 };
 
-// @desc    Get current user profile details
-// @route   GET /api/auth/me
-// @access  Private
+// GET /api/auth/me
 exports.getMe = async (req, res, next) => {
   try {
     const user = await User.findById(req.user.id).select('-password');
