@@ -207,7 +207,12 @@ exports.downloadNote = async (req, res, next) => {
         const match = note.filePath.match(/\/([a-z]+)\/upload\/(?:v\d+\/)?(.+)$/);
         if (match) {
           const resourceType = match[1]; // 'image' or 'raw'
-          const publicId = match[2];
+          let publicId = match[2];
+
+          // Strip extension if present for image resource types
+          if (resourceType === 'image') {
+            publicId = publicId.replace(/\.[^/.]+$/, '');
+          }
 
           // Generate signed secure download URL to bypass restricted PDF delivery
           const downloadUrl = cloudinary.utils.download_zip_url({
