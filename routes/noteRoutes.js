@@ -10,7 +10,9 @@ router.route('/')
   .post(auth, upload.single('pdf'), noteController.createNote);
 
 router.route('/:id')
-  .get(noteController.getNoteById);
+  .get(noteController.getNoteById)
+  .put(auth, upload.single('pdf'), noteController.updateNote)
+  .delete(auth, noteController.deleteNote);
 
 router.post('/:id/reviews', auth, noteController.createNoteReview);
 router.get('/:id/download', noteController.downloadNote);

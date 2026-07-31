@@ -251,3 +251,110 @@ exports.toggleBookmark = async (req, res, next) => {
     next(err);
   }
 };
+
+// @desc    Update study note details
+// @route   PUT /api/notes/:id
+// @access  Private
+exports.updateNote = async (req, res, next) => {
+  const { title, university, category, price, description, tags } = req.body;
+
+  try {
+    const note = await Note.findById(req.params.id);
+    if (!note) {
+      res.status(404);
+      throw new Error('Note document not found');
+    }
+
+    // Check ownership
+    if (note.author.toString() !== req.user.id) {
+      res.status(403);
+      throw new Error('Not authorized to update this note');
+    }
+
+    // If new file is uploaded
+    if (req.file) {
+      // Upload new file to Cloudinary with local fallback
+      let cloudinaryUrl = '';
+      let uploadedToCloudinary = false;
+      try {
+        const uploadResult = await cloudinary.uploader.upload(req.file.path, {
+          resource_type: 'auto',
+          folder: 'academic_notes'
+        });
+        cloudinaryUrl = uploadResult.secure_url;
+        uploadedToCloudinary = true;
+      } catch (uploadErr) {
+        console.warn("Cloudinary upload failed during update, falling back to local storage:", uploadErr.message || uploadErr);
+      }
+
+      // Delete old local file if it exists and is local (not a remote URL)
+      if (note.filePath && !note.filePath.startsWith('http://') && !note.filePath.startsWith('https://')) {
+        if (fs.existsSync(note.filePath)) {
+          fs.unlinkSync(note.filePath);
+        }
+      }
+
+      // Clean up local temp file only if successfully uploaded to Cloudinary
+      if (uploadedToCloudinary && req.file.path && fs.existsSync(req.file.path)) {
+        fs.unlinkSync(req.file.path);
+      }
+
+      note.filePath = uploadedToCloudinary ? cloudinaryUrl : req.file.path;
+    }
+
+    // Update fields
+    if (title) note.title = title;
+    if (university) note.university = university;
+    if (category) note.category = category.toLowerCase();
+    if (description) note.description = description;
+    if (price !== undefined) {
+      const priceVal = parseFloat(price) || 0;
+      note.price = priceVal;
+      note.isFree = priceVal === 0;
+    }
+    if (tags !== undefined) {
+      note.tags = tags ? tags.split(',').map(tag => tag.trim()).filter(Boolean) : [];
+    }
+
+    await note.save();
+    res.json(note);
+  } catch (err) {
+    if (req.file && req.file.path && fs.existsSync(req.file.path)) {
+      fs.unlinkSync(req.file.path);
+    }
+    next(err);
+  }
+};
+
+// @desc    Delete a study note
+// @route   DELETE /api/notes/:id
+// @access  Private
+exports.deleteNote = async (req, res, next) => {
+  try {
+    const note = await Note.findById(req.params.id);
+    if (!note) {
+      res.status(404);
+      throw new Error('Note document not found');
+    }
+
+    // Check ownership
+    if (note.author.toString() !== req.user.id) {
+      res.status(403);
+      throw new Error('Not authorized to delete this note');
+    }
+
+    // Delete local PDF file if it exists and is local
+    if (note.filePath && !note.filePath.startsWith('http://') && !note.filePath.startsWith('https://')) {
+      if (fs.existsSync(note.filePath)) {
+        fs.unlinkSync(note.filePath);
+      }
+    }
+
+    // Delete note from database
+    await Note.findByIdAndDelete(req.params.id);
+
+    res.json({ message: 'Note deleted successfully' });
+  } catch (err) {
+    next(err);
+  }
+};

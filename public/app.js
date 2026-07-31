@@ -13,6 +13,7 @@ const categoryFilter = document.getElementById("category-filter");
 const universityFilter = document.getElementById("university-filter");
 const priceFilter = document.getElementById("price-filter");
 const uploadForm = document.getElementById("upload-form");
+const editForm = document.getElementById("edit-form");
 const loginForm = document.getElementById("login-form");
 const signupForm = document.getElementById("signup-form");
 const toastEl = document.getElementById("toast-notification");
@@ -457,6 +458,67 @@ function setupListeners() {
       showToast("Server error updating profile settings.", "error");
     }
   });
+
+  let isUpdating = false;
+  editForm.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    if (isUpdating) return;
+
+    const noteId = document.getElementById("edit-note-id").value;
+    const submitBtn = editForm.querySelector("button[type='submit']");
+    const originalBtnText = submitBtn.innerHTML;
+
+    const title = document.getElementById("edit-title").value;
+    const university = document.getElementById("edit-university").value;
+    const category = document.getElementById("edit-category").value;
+    const price = parseFloat(document.getElementById("edit-price").value) || 0;
+    const description = document.getElementById("edit-description").value;
+    const tagsInput = document.getElementById("edit-tags").value;
+    const fileInput = document.getElementById("edit-file").files[0];
+    
+    const formData = new FormData();
+    if (fileInput) {
+      formData.append("pdf", fileInput);
+    }
+    formData.append("title", title);
+    formData.append("university", university);
+    formData.append("category", category);
+    formData.append("price", price);
+    formData.append("description", description);
+    formData.append("tags", tagsInput);
+
+    try {
+      isUpdating = true;
+      submitBtn.disabled = true;
+      submitBtn.innerHTML = `<span class="spinner"></span> Updating Note...`;
+
+      const res = await fetch(`${API_URL}/notes/${noteId}`, {
+        method: "PUT",
+        headers: getHeaders(null),
+        body: formData
+      });
+
+      if (res.ok) {
+        editForm.reset();
+        window.location.hash = "#explore";
+        showToast(`Successfully updated "${title}"!`);
+        await fetchNotes();
+        if (currentUser) {
+          await renderDashboard();
+        }
+      } else {
+        const data = await res.json();
+        showToast(data.message || "Failed to update note.", "error");
+      }
+    } catch (err) {
+      console.error(err);
+      showToast("Error connecting to server during update.", "error");
+    } finally {
+      isUpdating = false;
+      submitBtn.disabled = false;
+      submitBtn.innerHTML = originalBtnText;
+    }
+  });
 }
 
 function updateUserUI(user) {
@@ -592,6 +654,31 @@ async function renderNoteDetails(noteId) {
     });
     
     renderCommentsList(note);
+
+    const authorActionsEl = document.getElementById("view-note-author-actions");
+    if (currentUser && note.author === (currentUser._id || currentUser.id)) {
+      authorActionsEl.style.display = "flex";
+      
+      const editBtn = document.getElementById("view-note-edit-btn");
+      editBtn.replaceWith(editBtn.cloneNode(true));
+      document.getElementById("view-note-edit-btn").addEventListener("click", () => {
+        window.location.hash = "#";
+        setTimeout(() => {
+          openEditModal(note._id);
+        }, 150);
+      });
+      
+      const deleteBtn = document.getElementById("view-note-delete-btn");
+      deleteBtn.replaceWith(deleteBtn.cloneNode(true));
+      document.getElementById("view-note-delete-btn").addEventListener("click", () => {
+        window.location.hash = "#";
+        setTimeout(() => {
+          deleteNote(note._id, note.title);
+        }, 150);
+      });
+    } else {
+      authorActionsEl.style.display = "none";
+    }
   } catch (err) {
     console.error("Error loading note details:", err);
   }
@@ -652,11 +739,32 @@ async function renderDashboard() {
             <div style="font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: var(--text-main);">${note.title}</div>
             <div style="font-size: 0.75rem; color: var(--text-muted); margin-top: 0.2rem;">${note.university}</div>
           </div>
-          <div style="text-align: right; flex-shrink: 0;">
-            <div style="font-weight: 700; color: var(--text-main);">${note.downloads} downloads</div>
-            <div style="font-size: 0.75rem; color: var(--success-color); margin-top: 0.2rem;">Earned ₹${(note.downloads * note.price * 0.70).toFixed(0)}</div>
+          <div style="text-align: right; flex-shrink: 0; display: flex; align-items: center; gap: 1rem;">
+            <div style="text-align: right;">
+              <div style="font-weight: 700; color: var(--text-main);">${note.downloads} downloads</div>
+              <div style="font-size: 0.75rem; color: var(--success-color); margin-top: 0.2rem;">Earned ₹${(note.downloads * note.price * 0.70).toFixed(0)}</div>
+            </div>
+            <div style="display: flex; gap: 0.35rem;">
+              <button class="btn btn-outline edit-note-dash-btn" style="padding: 0.35rem 0.6rem; font-size: 0.75rem; border-color: var(--info-color); color: var(--info-color);">Edit</button>
+              <button class="btn btn-outline delete-note-dash-btn" style="padding: 0.35rem 0.6rem; font-size: 0.75rem; border-color: rgba(239, 68, 68, 0.5); color: rgb(248, 113, 113);">Delete</button>
+            </div>
           </div>
         `;
+        
+        item.querySelector(".edit-note-dash-btn").addEventListener("click", () => {
+          window.location.hash = "#";
+          setTimeout(() => {
+            openEditModal(note._id);
+          }, 150);
+        });
+
+        item.querySelector(".delete-note-dash-btn").addEventListener("click", () => {
+          window.location.hash = "#";
+          setTimeout(() => {
+            deleteNote(note._id, note.title);
+          }, 150);
+        });
+
         listEl.appendChild(item);
       });
     }
@@ -722,3 +830,56 @@ window.removeBookmark = async function(noteId) {
     console.error(err);
   }
 };
+
+async function openEditModal(noteId) {
+  try {
+    const res = await fetch(`${API_URL}/notes/${noteId}`);
+    if (!res.ok) {
+      showToast("Error retrieving note details for editing.", "error");
+      return;
+    }
+
+    const note = await res.json();
+    document.getElementById("edit-note-id").value = note._id;
+    document.getElementById("edit-title").value = note.title;
+    document.getElementById("edit-university").value = note.university;
+    document.getElementById("edit-category").value = note.category;
+    document.getElementById("edit-price").value = note.price;
+    document.getElementById("edit-tags").value = note.tags.join(', ');
+    document.getElementById("edit-description").value = note.description;
+    
+    // Reset file input
+    document.getElementById("edit-file").value = "";
+
+    window.location.hash = "#edit-modal";
+  } catch (err) {
+    console.error(err);
+    showToast("Error connecting to server.", "error");
+  }
+}
+
+async function deleteNote(noteId, title) {
+  if (!confirm(`Are you sure you want to delete "${title}"?`)) return;
+
+  try {
+    const res = await fetch(`${API_URL}/notes/${noteId}`, {
+      method: "DELETE",
+      headers: getHeaders()
+    });
+
+    if (res.ok) {
+      showToast(`Successfully deleted "${title}"!`);
+      window.location.hash = "#explore";
+      await fetchNotes();
+      if (currentUser) {
+        await renderDashboard();
+      }
+    } else {
+      const data = await res.json();
+      showToast(data.message || "Failed to delete note.", "error");
+    }
+  } catch (err) {
+    console.error(err);
+    showToast("Error connecting to server during deletion.", "error");
+  }
+}
