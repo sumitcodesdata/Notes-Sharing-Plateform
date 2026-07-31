@@ -95,7 +95,7 @@ exports.createNote = async (req, res, next) => {
     let uploadedToCloudinary = false;
     try {
       const uploadResult = await cloudinary.uploader.upload(req.file.path, {
-        resource_type: 'auto',
+        resource_type: 'raw',
         folder: 'academic_notes'
       });
       cloudinaryUrl = uploadResult.secure_url;
@@ -196,10 +196,29 @@ exports.downloadNote = async (req, res, next) => {
       throw new Error('Note document not found');
     }
 
+    note.downloads += 1;
+    await note.save();
+
+    const safeTitle = note.title.replace(/[^a-zA-Z0-9]/g, '_');
+
     // Check if the file is stored on Cloudinary
     if (note.filePath.startsWith('http://') || note.filePath.startsWith('https://')) {
-      note.downloads += 1;
-      await note.save();
+      if (note.filePath.includes('cloudinary.com')) {
+        const match = note.filePath.match(/\/([a-z]+)\/upload\/(?:v\d+\/)?(.+)$/);
+        if (match) {
+          const resourceType = match[1]; // 'image' or 'raw'
+          const publicId = match[2];
+
+          // Generate signed secure download URL to bypass restricted PDF delivery
+          const downloadUrl = cloudinary.utils.download_zip_url({
+            public_ids: [publicId],
+            resource_type: resourceType,
+            target_filename: safeTitle
+          });
+
+          return res.redirect(downloadUrl);
+        }
+      }
       return res.redirect(note.filePath);
     }
 
@@ -208,11 +227,7 @@ exports.downloadNote = async (req, res, next) => {
       throw new Error('Physical PDF file not found on server');
     }
 
-    note.downloads += 1;
-    await note.save();
-
-    const safeTitle = note.title.replace(/[^a-zA-Z0-9]/g, '_') + '.pdf';
-    res.download(note.filePath, safeTitle);
+    res.download(note.filePath, safeTitle + '.pdf');
   } catch (err) {
     next(err);
   }
@@ -278,7 +293,7 @@ exports.updateNote = async (req, res, next) => {
       let uploadedToCloudinary = false;
       try {
         const uploadResult = await cloudinary.uploader.upload(req.file.path, {
-          resource_type: 'auto',
+          resource_type: 'raw',
           folder: 'academic_notes'
         });
         cloudinaryUrl = uploadResult.secure_url;
