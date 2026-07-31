@@ -176,13 +176,19 @@ function setupListeners() {
   universityFilter.addEventListener("change", fetchNotes);
   priceFilter.addEventListener("change", fetchNotes);
   
+  let isUploading = false;
   uploadForm.addEventListener("submit", async (e) => {
     e.preventDefault();
+    if (isUploading) return;
+
     if (!currentUser) {
       window.location.hash = "#login-modal";
       showToast("Please log in to upload notes.", "info");
       return;
     }
+
+    const submitBtn = uploadForm.querySelector("button[type='submit']");
+    const originalBtnText = submitBtn.innerHTML;
 
     const title = document.getElementById("upload-title").value;
     const university = document.getElementById("upload-university").value;
@@ -202,6 +208,10 @@ function setupListeners() {
     formData.append("tags", tagsInput);
     
     try {
+      isUploading = true;
+      submitBtn.disabled = true;
+      submitBtn.innerHTML = `<span class="spinner"></span> Publishing Note...`;
+
       const res = await fetch(`${API_URL}/notes`, {
         method: "POST",
         headers: getHeaders(null),
@@ -220,6 +230,10 @@ function setupListeners() {
     } catch (err) {
       console.error(err);
       showToast("Error connecting to server during upload.", "error");
+    } finally {
+      isUploading = false;
+      submitBtn.disabled = false;
+      submitBtn.innerHTML = originalBtnText;
     }
   });
 
