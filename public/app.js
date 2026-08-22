@@ -132,11 +132,19 @@ function renderNotes(notes) {
     const code = note._id.charCodeAt(note._id.length - 1) || index;
     const avatarBg = avatarGradients[code % avatarGradients.length];
     
+    const categoryClassMap = {
+      "computer science": "badge-sky",
+      "mathematics": "badge-violet",
+      "physics": "badge-amber",
+      "business": "badge-indigo"
+    };
+    const badgeClass = categoryClassMap[(note.category || '').toLowerCase()] || "badge-indigo";
+
     card.innerHTML = `
       <div class="card-details-trigger" data-id="${note._id}" style="cursor: pointer;">
         <div class="card-tags">
           <div class="badge-group">
-            <span class="badge badge-category">${note.category}</span>
+            <span class="badge ${badgeClass}">${note.category}</span>
           </div>
           <span class="university-tag">${note.university}</span>
         </div>
@@ -614,9 +622,17 @@ async function renderNoteDetails(noteId) {
     document.getElementById("view-note-preview-header").textContent = `Course Outline & Notes Preview`;
     document.getElementById("view-note-preview-paragraph").textContent = `${note.description} This document serves as study reference sheets for courses at ${note.university}. Standard pages cover formulas, core definitions, and curriculum summaries.`;
     
+    const categoryClassMap = {
+      "computer science": "badge-sky",
+      "mathematics": "badge-violet",
+      "physics": "badge-amber",
+      "business": "badge-indigo"
+    };
+    const badgeClass = categoryClassMap[(note.category || '').toLowerCase()] || "badge-indigo";
+
     const badgesEl = document.getElementById("view-note-badges");
     badgesEl.innerHTML = `
-      <span class="badge badge-category">${note.category}</span>
+      <span class="badge ${badgeClass}">${note.category}</span>
     `;
     
     const downloadBtn = document.getElementById("view-note-download-btn");

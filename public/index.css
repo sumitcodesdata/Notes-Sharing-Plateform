@@ -1,0 +1,203 @@
+/* ==========================================================================
+   EduGuide AI Design System - Enhanced Contrast & Defined Border System
+   ========================================================================== */
+
+:root {
+  /* Color System */
+  --bg-primary: #F8FAFC; /* Slightly crisp ambient background */
+  --surface-card: #FFFFFF;
+  --surface-glass: rgba(255, 255, 255, 0.96);
+  
+  /* Brand Colors */
+  --brand-navy: #0F172A;
+  --brand-navy-light: #1E293B;
+  --brand-indigo: #4F46E5;
+  --brand-indigo-light: #EEF2FF;
+  --brand-indigo-hover: #4338CA;
+
+  /* Accent Colors for tags & badges */
+  --accent-amber: #F59E0B;
+  --accent-amber-bg: #FEF3C7;
+  --accent-amber-text: #B45309;
+  --accent-amber-border: #FCD34D;
+
+  --accent-sky: #0EA5E9;
+  --accent-sky-bg: #E0F2FE;
+  --accent-sky-text: #0284C7;
+  --accent-sky-border: #7DD3FC;
+
+  --accent-violet: #6366F1;
+  --accent-violet-bg: #EDE9FE;
+  --accent-violet-text: #5B21B6;
+  --accent-violet-border: #C4B5FD;
+
+  --accent-emerald: #10B981;
+  --accent-emerald-bg: #D1FAE5;
+  --accent-emerald-text: #047857;
+  --accent-emerald-border: #6EE7B7;
+
+  /* Slate Neutrals with Defined Contrast */
+  --slate-50: #F8FAFC;
+  --slate-100: #F1F5F9;
+  --slate-200: #E2E8F0;
+  --slate-300: #CBD5E1; /* Defined primary border color */
+  --slate-400: #94A3B8;
+  --slate-500: #64748B;
+  --slate-600: #475569;
+  --slate-700: #334155;
+  --slate-800: #1E293B;
+  --slate-900: #0F172A;
+
+  /* Border Tokens */
+  --border-color: var(--slate-300);
+  --border-color-subtle: var(--slate-200);
+  --border-color-focus: var(--brand-indigo);
+  --border-width-standard: 1.5px;
+  --border-width-thick: 2px;
+
+  /* Legacy & Semantic Variable Mapping */
+  --bg-color: var(--bg-primary);
+  --surface-color: var(--surface-card);
+  --surface-color-solid: var(--surface-card);
+  --primary-color: var(--brand-indigo);
+  --primary-glow: rgba(79, 70, 229, 0.15);
+  --primary-gradient: linear-gradient(135deg, #4F46E5, #6366F1);
+  --secondary-gradient: linear-gradient(135deg, #0EA5E9, #4F46E5);
+  --text-main: var(--slate-900);
+  --text-body: var(--slate-600);
+  --text-muted: var(--slate-500);
+  --success-color: #10B981;
+  --info-color: #0EA5E9;
+  --warning-color: #F59E0B;
+  --danger-color: #EF4444;
+
+  /* Typography */
+  --font-heading: 'Outfit', -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-body: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-sans: var(--font-body);
+  --font-display: var(--font-heading);
+
+  /* Radii & Shadows */
+  --radius-sm: 8px;
+  --radius-md: 14px;
+  --radius-lg: 20px;
+  --radius-pill: 9999px;
+
+  --shadow-sm: 0 1px 3px rgba(15, 23, 42, 0.06);
+  --shadow-card: 0 4px 18px rgba(15, 23, 42, 0.05), 0 1px 3px rgba(15, 23, 42, 0.03);
+  --shadow-hover: 0 12px 28px -4px rgba(37, 99, 235, 0.12), 0 4px 8px -2px rgba(15, 23, 42, 0.06);
+  --shadow-modal: 0 25px 50px -10px rgba(15, 23, 42, 0.22);
+
+  /* Transitions */
+  --transition-smooth: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* Base Component Utility Classes */
+
+/* Glass Panel & Card System with Clear Borders */
+.glass-panel {
+  background: var(--surface-glass);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: var(--border-width-standard) solid var(--slate-300);
+  box-shadow: var(--shadow-card);
+  border-radius: var(--radius-md);
+  transition: var(--transition-smooth);
+}
+
+.glass-card {
+  background: var(--surface-card);
+  border: var(--border-width-standard) solid var(--slate-300);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-card);
+  transition: var(--transition-smooth);
+}
+
+.glass-card-lg {
+  border-radius: var(--radius-lg);
+}
+
+.glass-card:hover,
+.glass-panel:hover {
+  transform: translateY(-3px);
+  box-shadow: var(--shadow-hover);
+  border-color: var(--brand-indigo);
+}
+
+/* Badges & Pills with Vibrant Border Framing */
+.badge,
+.pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.35rem 0.8rem;
+  border-radius: var(--radius-pill);
+  font-family: var(--font-body);
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+  line-height: 1.2;
+  text-transform: capitalize;
+  transition: var(--transition-smooth);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.03);
+}
+
+.badge-indigo {
+  background-color: var(--brand-indigo-light);
+  color: #3730A3;
+  border: 1.5px solid #A5B4FC;
+}
+
+.badge-amber {
+  background-color: var(--accent-amber-bg);
+  color: var(--accent-amber-text);
+  border: 1.5px solid var(--accent-amber-border);
+}
+
+.badge-sky {
+  background-color: var(--accent-sky-bg);
+  color: var(--accent-sky-text);
+  border: 1.5px solid var(--accent-sky-border);
+}
+
+.badge-violet {
+  background-color: var(--accent-violet-bg);
+  color: var(--accent-violet-text);
+  border: 1.5px solid var(--accent-violet-border);
+}
+
+.badge-emerald {
+  background-color: var(--accent-emerald-bg);
+  color: var(--accent-emerald-text);
+  border: 1.5px solid var(--accent-emerald-border);
+}
+
+/* Headings */
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-heading);
+  font-weight: 700;
+  color: var(--slate-900);
+  letter-spacing: -0.02em;
+  line-height: 1.25;
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--slate-300);
+  border-radius: var(--radius-pill);
+  border: 2px solid transparent;
+  background-clip: content-box;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--slate-400);
+}
